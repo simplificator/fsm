@@ -5,10 +5,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "fsm"
-    gem.summary = %Q{TODO}
-    gem.email = "pascal.betz@simplificator.com"
-    gem.homepage = "http://github.com/pascalbetz/fsm"
-    gem.authors = ["pascalbetz"]
+    gem.summary = %Q{A simple finite state machine (FSM) gem.}
+    gem.email = "info@simplificator.com"
+    gem.homepage = "http://github.com/simplificator/fsm"
+    gem.authors = ["simplificator"]
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
