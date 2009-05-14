@@ -1,11 +1,11 @@
 module FSM
   class Machine
-    attr_accessor(:current_state, :states, :state_attribute)
+    attr_accessor(:initial_state_name, :current_state_attribute_name, :states)
     
-    def initialize(klass)
-      @klass = klass
+    def initialize(target_class)
+      @target_class = target_class
       self.states = {}
-      self.state_attribute = :state
+      self.current_state_attribute_name = :state
     end
     
     def self.[](includer)
@@ -19,76 +19,73 @@ module FSM
     def state(name, options = {})
       raise "State is already defined: '#{name}'" if self.states[name]
       self.states[name] = State.new(name, options)
-      initial(name) unless self.current_state
-      nil
+      #--> initial(name) unless self.current_state
     end
     
-    def initial(name)
-      self.current_state = self.states[name]
-      raise UnknownState.new("Unknown state '#{name}'. Define states first with state(name)") unless self.current_state
-      nil
+    def initial_state_name=(value)
+      raise UnknownState.new("Unknown state '#{value}'. Define states first with state(name)") unless self.states[value]
+      @initial_state_name = value
     end
     
     def transition(name, from_name, to_name, options = {})
       raise ArgumentError.new("name, from_name and to_name are required") if name.nil? || from_name.nil? || to_name.nil?
       raise UnknownState.new("Unknown source state '#{from}'") unless self.states[from_name]
       raise UnknownState.new("Unknown target state '#{to}'") unless self.states[to_name]
-      define_transition_method(name, to_name)
+      
       from_state = self.states[from_name]
       to_state = self.states[to_name]
+      
       transition = Transition.new(name, from_state, to_state, options)
-      from_state.transitions[to_state.name] = transition
-      nil
+      from_state.add_transition(transition)
+      
+      define_transition_method(name, to_name)
+      
     end
     
-    def attribute(name)
-      self.state_attribute = name
-    end
-    
-    def reachable_states()
-      self.states.map do |name, state|
-        state.to_states if state == current_state
-      end.flatten.compact
-    end
-    
-    def available_transitions()
-      current_state.transitions.values  
-    end
-    
-    
-    def post_process
-      define_state_attribute_methods(self.state_attribute)
-    end
-    
-    
-    
-    private
-    
-    def define_state_attribute_methods(name)
-      @klass.instance_eval do
-        define_method("#{name}") do 
-          Machine[self.class].current_state.name
-        end
-        
-        define_method("#{name}=") do |value|
-          Machine[self.class].current_state = Machine[self.class].states[value]
-          raise("Unknown State #{value}") unless Machine[self.class].current_state
-        end
+    def get_current_state_name(target)
+      value = target.send(current_state_attribute_name)
+      if value && value.is_a?(String)
+        value.intern
+      else
+        value
       end
     end
     
+    def set_current_state_name(target, value)
+      target.send("#{current_state_attribute_name}=", value)
+    end
+
+    
+    def reachable_states(target)
+      reachables = []
+      current_state_name = get_current_state_name(target)
+      self.states.map do |name, state|
+        reachables += state.to_states if state.name == current_state_name
+      end
+      reachables
+    end
+    
+    def available_transitions(target)
+      self.states[get_current_state_name(target)].transitions.values
+    end
+    
+    private
+    
     def define_transition_method(name, to_name)
-      @klass.instance_eval do
+      @target_class.instance_eval do
         define_method(name) do |*args|
-          from_state = Machine[self.class].current_state
-          to_state = Machine[self.class].states[to_name]
+          machine = Machine[self.class]
+          from_name = machine.get_current_state_name(self)
+          from_state = machine.states[from_name]
+          to_state = machine.states[to_name]
           transition = from_state.transitions[to_name]
-          raise InvalidStateTransition.new("No transition defined from #{from_state.name} -> #{to_state.name}") unless transition
+          raise InvalidStateTransition.new("No transition defined from #{from_name} -> #{to_name}") unless transition
           
           from_state.exit(self)
           transition.fire_event(self, args)
           to_state.enter(self)
-          Machine[self.class].current_state = to_state
+          Machine[self.class].set_current_state_name(self, to_name)
+          true # at the moment always return true
         end
       end
     end

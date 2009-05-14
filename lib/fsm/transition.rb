@@ -11,6 +11,7 @@ module FSM
     def fire_event(target, args)
       self.event.execute(target, args)
     end    
+    
     def to_s
       "Transition from #{self.from.name} -> #{self.to.name} with event #{self.event}"
     end    

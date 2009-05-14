@@ -13,13 +13,13 @@ module FSM
     end
     
     # execute this executable on the given target
-    def execute(target, args)
+    def execute(target, *args)
+      return if @thing.nil?
       case @thing
       when String, Symbol:
         @has_arguments ? target.send(@thing, *args) : target.send(@thing)
       when Proc:
         @has_arguments ? @thing.call(target, *args) : @thing.call(target)
-      when Nil:
       else
         raise "Unknown Thing #{@thing}"
       end

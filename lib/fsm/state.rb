@@ -25,13 +25,18 @@ module FSM
       @exit.execute(target, nil)
     end    
     
+    def add_transition(transition)
+      raise ArgumentError.new("#{self} already has an transition '#{transition.name}'") if @transitions.has_key?(transition.name)
+      @transitions[transition.to.name] = transition
+    end
+    
     # All states that are reachable form this state by one hop
     def to_states
-      self.transitions.map { |to_name, transition| transition.to}
+      @transitions.map { |to_name, transition| transition.to}
     end
     
     def to_s
-      "State '#{self.name}' (#{self.object_id})"
+      "State '#{self.name}'"
     end
 
   end
