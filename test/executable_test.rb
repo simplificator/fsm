@@ -1,15 +1,12 @@
 require 'test_helper'
 
 class ExecutableTest < Test::Unit::TestCase
-  #should "probably rename this file and start testing for real" do
-  #  flunk "hey buddy, you should probably rename this file and start testing for real"
-  #end
   context 'Should execute method without arguments' do
     should 'with symbol' do
-      assert_equal 4, FSM::Executable.new(:length).execute("1234")
+      assert_equal 4, FSM::Executable.new(:length).execute('1234')
     end
     should 'with string' do
-      assert_equal 4, FSM::Executable.new('length').execute("1234")
+      assert_equal 4, FSM::Executable.new('length').execute('1234')
     end
     should 'with proc' do
       assert_equal 4, FSM::Executable.new(lambda { |target| target.length }).execute('1234')

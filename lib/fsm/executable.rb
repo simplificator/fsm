@@ -2,7 +2,7 @@ module FSM
   #
   # Execute an action specified by either String, Sylbol or Proc.
   # Symbol and String represent methods which are called on the target object, Proc will get executed 
-  # and receives at least the target as parameter
+  # and receives at least the target as parameter. If others parameters are passed then they'll get forwarded as well.
   class Executable
     # Create a new Executable
     # if args is true, then arguments are passed on to the target method or the Proc, if false nothing 
@@ -17,9 +17,17 @@ module FSM
       return if @thing.nil?
       case @thing
       when String, Symbol:
-        @has_arguments ? target.send(@thing, *args) : target.send(@thing)
+        if (args.length > 0)
+          target.send(@thing, *args)
+        else
+          target.send(@thing)
+        end
       when Proc:
-        @has_arguments ? @thing.call(target, *args) : @thing.call(target)
+        if (args.length > 0) 
+          @thing.call(target, *args)
+        else
+          @thing.call(target)
+        end
       else
         raise "Unknown Thing #{@thing}"
       end

@@ -3,6 +3,7 @@ module FSM
   # A State has a name and a list of outgoing transitions.
   # 
   class State
+    include FSM::Options::InstanceMethods
     attr_reader(:name, :transitions)
     
     # name: a symbol which identifies this state
@@ -10,6 +11,8 @@ module FSM
     #  * :enter : a symbol or string or Proc
     #  * :exit : a symbol or string or Proc
     def initialize(name, options = {})
+      raise ArgumentError.new('Name is required') unless name
+      assert_options(options, [:enter, :exit])
       @name = name
       @enter = Executable.new options[:enter]
       @exit = Executable.new options[:exit]
@@ -18,15 +21,18 @@ module FSM
     
     # Called when this state is entered
     def enter(target)
-      @enter.execute(target, nil)
+      @enter.execute(target)
+      nil
     end
     # Called when this state is exited
     def exit(target)
-      @exit.execute(target, nil)
+      @exit.execute(target)
+      nil
     end    
     
     def add_transition(transition)
-      raise ArgumentError.new("#{self} already has an transition '#{transition.name}'") if @transitions.has_key?(transition.name)
+      raise ArgumentError.new("#{self} already has a transition to '#{transition.name}'") if @transitions.has_key?(transition.name)
+      raise ArgumentError.new("the transition '#{transition.name}' is already defined") if @transitions.detect() {|to_name, tr| transition.name == tr.name}
       @transitions[transition.to.name] = transition
     end
     

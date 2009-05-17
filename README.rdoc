@@ -1,7 +1,7 @@
 = fsm
 
-Description goes here.
+FSM is a simple finite state machine
 
 == Copyright
 
-Copyright (c) 2009 pascalbetz. See LICENSE for details.
+Copyright (c) 2009 simplificator GmbH. See LICENSE for details.

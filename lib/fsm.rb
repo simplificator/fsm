@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), 'fsm', 'options')
 require File.join(File.dirname(__FILE__), 'fsm', 'errors')
 require File.join(File.dirname(__FILE__), 'fsm', 'machine')
 require File.join(File.dirname(__FILE__), 'fsm', 'state')

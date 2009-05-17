@@ -14,9 +14,6 @@ class Invoice
     state_attribute(:state_col)
     
     transition(:start, :open, :progress, :event => :event_start)
-    # assert that no double event exists for state
-    #transition(:start, :open, :closed)
-    
     transition(:close, :progress, :closed)
     transition(:reopen, :closed, :open)
   end
