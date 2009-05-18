@@ -1,10 +1,11 @@
 module FSM
   class Machine
-    attr_accessor(:initial_state_name, :current_state_attribute_name, :states)
+    attr_accessor(:initial_state_name, :current_state_attribute_name, :states, :transitions)
     
     def initialize(target_class)
       @target_class = target_class
-      self.states = {}
+      self.states = []
+      self.transitions = []
       self.current_state_attribute_name = :state
     end
     
@@ -17,29 +18,24 @@ module FSM
     end
     
     def state(name, options = {})
-      raise "State is already defined: '#{name}'" if self.states[name]
-      self.states[name] = State.new(name, options)
+      raise "State is already defined: '#{name}'" if self.state_for_name(name, true)
+      self.states << State.new(name, options)
       self.initial_state_name=(name) unless self.initial_state_name
     end
     
     def initial_state_name=(value)
-      raise UnknownState.new("Unknown state '#{value}'. Define states first with state(name)") unless self.states[value]
+      raise UnknownState.new("Unknown state '#{value}'. Define states first with state(name)") unless self.state_for_name(value, true)
       @initial_state_name = value
     end
     
     def transition(name, from_name, to_name, options = {})
       raise ArgumentError.new("name, from_name and to_name are required") if name.nil? || from_name.nil? || to_name.nil?
-      raise UnknownState.new("Unknown source state '#{from}'") unless self.states[from_name]
-      raise UnknownState.new("Unknown target state '#{to}'") unless self.states[to_name]
       
-      from_state = self.states[from_name]
-      to_state = self.states[to_name]
-      
+      from_state = self.state_for_name(from_name)
+      to_state = self.state_for_name(to_name)
       transition = Transition.new(name, from_state, to_state, options)
       from_state.add_transition(transition)
-      
-      define_transition_method(name)
-      
+      self.transitions << transition
     end
     
     def self.get_current_state_name(target)
@@ -55,14 +51,32 @@ module FSM
     def reachable_states(target)
       reachables = []
       current_state_name = Machine.get_current_state_name(target)
-      self.states.map do |name, state|
+      self.states.map do |state|
         reachables += state.to_states if state.name == current_state_name
       end
       reachables
     end
     
     def available_transitions(target)
-      self.states[Machine.get_current_state_name(target)].transitions.values
+      current_state_name = Machine.get_current_state_name(target)
+      state = state_for_name(current_state_name)
+      state.transitions.values
+    end
+    
+    
+    def build_transition_methods
+      names = self.transitions.map() {|transition| transition.name}.uniq
+      names.each do |name|
+        define_transition_method(name)
+      end
+    end
+    
+    def state_for_name(name, quiet = false)
+      state = self.states.detect() {|state| state.name == name}
+      if !quiet
+        raise ArgumentError.new("Unknonw state '#{name}'") unless state
+      end
+      state
     end
     
     private
@@ -72,7 +86,7 @@ module FSM
         define_method(name) do |*args|
           machine = Machine[self.class]
           from_name = Machine.get_current_state_name(self)
-          from_state = machine.states[from_name]
+          from_state = machine.state_for_name(from_name)
           
           entry = from_state.transitions.detect() {|to_name, tr| tr.name == name}
           transition = entry.last if entry
@@ -83,19 +97,7 @@ module FSM
           transition.fire_event(self, args)
           to_state.enter(self)
           Machine.set_current_state_name(self, to_state.name)
-          true
-          
-          
-          
-          #to_state = machine.states[to_name]
-          #transition = from_state.transitions[to_name]
-          #raise InvalidStateTransition.new("No transition defined from #{from_name} -> #{to_name}") unless transition
-          
-          #from_state.exit(self)
-          #transition.fire_event(self, args)
-          #to_state.enter(self)
-          #Machine.set_current_state_name(self, to_name)
-          #true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
+          true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
         end
       end
     end
