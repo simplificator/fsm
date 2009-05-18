@@ -1,7 +1,0 @@
-= fsm
-
-FSM is a simple finite state machine
-
-== Copyright
-
-Copyright (c) 2009 simplificator GmbH. See LICENSE for details.
