@@ -16,7 +16,7 @@ FSM is a simple finite state machine
         
         # define all valid transitions (name, from, to)
         # you can define callbacks which are called only on this transition
-        transition(:heat, :solid, :liquid)
+        transition(:heat, :solid, :liquid, :event => :liquified)
         transition(:heat, :liquid, :gas)     # look mam.... two transitions with same name
         transition(:cooldown, :gas, :liquid)
         transition(:cooldown, :liquid, :solid)
