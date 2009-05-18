@@ -14,19 +14,19 @@ module FSM
       raise ArgumentError.new('Name is required') unless name
       assert_options(options, [:enter, :exit])
       @name = name
-      @enter = Executable.new options[:enter]
-      @exit = Executable.new options[:exit]
+      @enter = Executable.new options[:enter] if options.has_key?(:enter)
+      @exit = Executable.new options[:exit] if options.has_key?(:exit)
       @transitions = {}
     end
     
     # Called when this state is entered
     def enter(target)
-      @enter.execute(target)
+      @enter.execute(target) if @enter
       nil
     end
     # Called when this state is exited
     def exit(target)
-      @exit.execute(target)
+      @exit.execute(target) if @exit
       nil
     end    
     

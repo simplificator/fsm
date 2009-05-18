@@ -1,10 +1,6 @@
-require File.join(File.dirname(__FILE__), 'fsm', 'options')
-require File.join(File.dirname(__FILE__), 'fsm', 'errors')
-require File.join(File.dirname(__FILE__), 'fsm', 'machine')
-require File.join(File.dirname(__FILE__), 'fsm', 'state')
-require File.join(File.dirname(__FILE__), 'fsm', 'transition')
-require File.join(File.dirname(__FILE__), 'fsm', 'executable')
-require File.join(File.dirname(__FILE__), 'fsm', 'builder')
+%w[options errors machine state transition executable builder].each do |item|
+  require File.join(File.dirname(__FILE__), 'fsm', item)
+end
 
 module FSM
   module ClassMethods
@@ -12,6 +8,13 @@ module FSM
       raise 'FSM is already defined. Call define_fsm only once' if Machine[self]
       builder = Builder.new(self)
       Machine[self] = builder.process(&block)
+      self.instance_eval() do 
+        alias_method "fsm_state_attribute", Machine[self].current_state_attribute_name
+        define_method(Machine[self].current_state_attribute_name) do
+          value = fsm_state_attribute
+          value ? value : Machine[self.class].initial_state_name
+        end
+      end
     end
   end
   

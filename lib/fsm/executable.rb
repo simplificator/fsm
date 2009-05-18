@@ -7,14 +7,13 @@ module FSM
     # Create a new Executable
     # if args is true, then arguments are passed on to the target method or the Proc, if false nothing 
     # will get passed
-    def initialize(thing, args = false)
+    def initialize(thing)
+      raise ArgumentError.new("Unknown thing #{thing}") unless thing
       @thing = thing
-      @has_arguments = args
     end
     
     # execute this executable on the given target
     def execute(target, *args)
-      return if @thing.nil?
       case @thing
       when String, Symbol:
         if (args.length > 0)

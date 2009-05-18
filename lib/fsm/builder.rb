@@ -7,6 +7,7 @@ module FSM
       undef_method m unless  m == '__send__' || m == '__id__' || m == 'instance_eval'
     end
     
+    # Create a new Builder which creates a Machine for the target_class
     def initialize(target_class)
       @target_class = target_class
       @machine = Machine.new(target_class)
@@ -26,7 +27,7 @@ module FSM
     #  * options
     #  
     def transition(name, from_name, to_name, options = {})
-      @machine.transition(name, from_name, to_name, options = {})
+      @machine.transition(name, from_name, to_name, options)
       nil # do not expose FSM details
     end
     

@@ -8,11 +8,11 @@ module FSM
       self.name = name
       self.from = from
       self.to = to
-      self.event = Executable.new options[:event]
+      self.event = Executable.new options[:event] if options.has_key?(:event)
     end
     
     def fire_event(target, args)
-      self.event.execute(target, args)
+      self.event.execute(target, *args) if self.event
     end    
     
     def to_s

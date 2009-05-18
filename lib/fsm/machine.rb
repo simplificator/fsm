@@ -19,7 +19,7 @@ module FSM
     def state(name, options = {})
       raise "State is already defined: '#{name}'" if self.states[name]
       self.states[name] = State.new(name, options)
-      #--> initial(name) unless self.current_state
+      self.initial_state_name=(name) unless self.initial_state_name
     end
     
     def initial_state_name=(value)
@@ -42,23 +42,19 @@ module FSM
       
     end
     
-    def get_current_state_name(target)
-      value = target.send(current_state_attribute_name)
-      if value && value.is_a?(String)
-        value.intern
-      else
-        value
-      end
+    def self.get_current_state_name(target)
+      value = target.send(Machine[target.class].current_state_attribute_name)
+      (value && value.is_a?(String)) ? value.intern : value
     end
     
-    def set_current_state_name(target, value)
-      target.send("#{current_state_attribute_name}=", value)
+    def self.set_current_state_name(target, value)
+      target.send("#{Machine[target.class].current_state_attribute_name}=", value)
     end
 
     
     def reachable_states(target)
       reachables = []
-      current_state_name = get_current_state_name(target)
+      current_state_name = Machine.get_current_state_name(target)
       self.states.map do |name, state|
         reachables += state.to_states if state.name == current_state_name
       end
@@ -66,7 +62,7 @@ module FSM
     end
     
     def available_transitions(target)
-      self.states[get_current_state_name(target)].transitions.values
+      self.states[Machine.get_current_state_name(target)].transitions.values
     end
     
     private
@@ -75,7 +71,7 @@ module FSM
       @target_class.instance_eval do
         define_method(name) do |*args|
           machine = Machine[self.class]
-          from_name = machine.get_current_state_name(self)
+          from_name = Machine.get_current_state_name(self)
           from_state = machine.states[from_name]
           to_state = machine.states[to_name]
           transition = from_state.transitions[to_name]
@@ -84,8 +80,8 @@ module FSM
           from_state.exit(self)
           transition.fire_event(self, args)
           to_state.enter(self)
-          Machine[self.class].set_current_state_name(self, to_name)
-          true # at the moment always return true
+          Machine.set_current_state_name(self, to_name)
+          true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
         end
       end
     end
