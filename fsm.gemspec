@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{fsm}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["simplificator"]
-  s.date = %q{2009-05-14}
+  s.date = %q{2009-05-18}
   s.email = %q{info@simplificator.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -18,14 +18,19 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION.yml",
     "lib/fsm.rb",
+    "lib/fsm/builder.rb",
     "lib/fsm/errors.rb",
     "lib/fsm/executable.rb",
     "lib/fsm/machine.rb",
-    "lib/fsm/machine_config.rb",
+    "lib/fsm/options.rb",
     "lib/fsm/state.rb",
     "lib/fsm/transition.rb",
-    "test/fsm_test.rb",
-    "test/test_helper.rb"
+    "test/executable_test.rb",
+    "test/invoice_sample_test.rb",
+    "test/options_test.rb",
+    "test/state_test.rb",
+    "test/test_helper.rb",
+    "test/transition_test.rb"
   ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/simplificator/fsm}
@@ -34,8 +39,12 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.2}
   s.summary = %q{A simple finite state machine (FSM) gem.}
   s.test_files = [
-    "test/fsm_test.rb",
-    "test/test_helper.rb"
+    "test/executable_test.rb",
+    "test/invoice_sample_test.rb",
+    "test/options_test.rb",
+    "test/state_test.rb",
+    "test/test_helper.rb",
+    "test/transition_test.rb"
   ]
 
   if s.respond_to? :specification_version then
