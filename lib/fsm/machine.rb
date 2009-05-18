@@ -38,7 +38,7 @@ module FSM
       transition = Transition.new(name, from_state, to_state, options)
       from_state.add_transition(transition)
       
-      define_transition_method(name, to_name)
+      define_transition_method(name)
       
     end
     
@@ -67,21 +67,35 @@ module FSM
     
     private
     
-    def define_transition_method(name, to_name)
+    def define_transition_method(name)
       @target_class.instance_eval do
         define_method(name) do |*args|
           machine = Machine[self.class]
           from_name = Machine.get_current_state_name(self)
           from_state = machine.states[from_name]
-          to_state = machine.states[to_name]
-          transition = from_state.transitions[to_name]
-          raise InvalidStateTransition.new("No transition defined from #{from_name} -> #{to_name}") unless transition
+          
+          entry = from_state.transitions.detect() {|to_name, tr| tr.name == name}
+          transition = entry.last if entry
+          raise InvalidStateTransition.new("No transition with name '#{name}' defined from '#{from_name}'") unless transition
+          to_state = transition.to
           
           from_state.exit(self)
           transition.fire_event(self, args)
           to_state.enter(self)
-          Machine.set_current_state_name(self, to_name)
-          true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
+          Machine.set_current_state_name(self, to_state.name)
+          true
+          
+          
+          
+          #to_state = machine.states[to_name]
+          #transition = from_state.transitions[to_name]
+          #raise InvalidStateTransition.new("No transition defined from #{from_name} -> #{to_name}") unless transition
+          
+          #from_state.exit(self)
+          #transition.fire_event(self, args)
+          #to_state.enter(self)
+          #Machine.set_current_state_name(self, to_name)
+          #true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
         end
       end
     end

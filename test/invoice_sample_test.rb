@@ -26,7 +26,7 @@ class Invoice
   end
 end
 
-class InvoiceTest < Test::Unit::TestCase
+class InvoiceSampleTest < Test::Unit::TestCase
   context 'Invoice' do
     
     should 'Initial State is the first state defined unless no initial() call was made' do
