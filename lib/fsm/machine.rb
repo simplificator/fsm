@@ -71,16 +71,19 @@ module FSM
       end
     end
     
+    # Lookup a State by it's name
+    # raises ArgumentError if state can not be found unless quiet is set to true
     def state_for_name(name, quiet = false)
       state = self.states.detect() {|state| state.name == name}
-      if !quiet
-        raise ArgumentError.new("Unknonw state '#{name}'") unless state
-      end
+      raise ArgumentError.new("Unknonw state '#{name}'") unless quiet || state
       state
     end
     
     private
     
+    # defines a transition method on the target class.
+    # this is the method triggering the state change.
+    #
     def define_transition_method(name)
       @target_class.instance_eval do
         define_method(name) do |*args|

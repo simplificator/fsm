@@ -12,6 +12,5 @@ module FSM
         end
       end 
     end
-    
   end
 end

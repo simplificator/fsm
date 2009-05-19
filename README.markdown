@@ -5,6 +5,7 @@ FSM is a simple finite state machine
 ## Usage
     class Water
       include FSM
+      # The state machine is specified as a block in define_fsm.
       define_fsm do
         # now define all the states
         # you can add :enter / :exit callbacks (callback can be a String, Symbol or Proc)
@@ -14,7 +15,7 @@ FSM is a simple finite state machine
         state(:liquid)
         state(:solid, :enter => :on_enter_solid, :exit => :on_exit_solid)
         
-        # define all valid transitions (name, from, to)
+        # define all valid transitions (arguments are name of transition, from state name, to state name)
         # you can define callbacks which are called only on this transition
         transition(:heat_up, :solid, :liquid, :event => :liquified)
         transition(:heat_up, :liquid, :gas)     # look mam.... two transitions with same name
