@@ -7,15 +7,15 @@ class StateTest < Test::Unit::TestCase
         FSM::State.new(nil, nil, nil)
       end
      
-      FSM::State.new('bla')
+      FSM::State.new('bla', self)
     end
     
     should 'allow only valid options' do
       assert_raise(ArgumentError) do
-        FSM::State.new('bla', :foo => 12)
+        FSM::State.new('bla', self, :foo => 12)
       end
-      FSM::State.new('bla', :enter => :some)
-      FSM::State.new('bla', :exit => :some)
+      FSM::State.new('bla', self, :enter => :some)
+      FSM::State.new('bla', self, :exit => :some)
     end
   end
 end

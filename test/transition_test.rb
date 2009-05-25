@@ -5,8 +5,8 @@ class TransitionTest < Test::Unit::TestCase
     
     
     should 'require name, from and to' do
-      bli_state = FSM::State.new('bli')
-      blo_state = FSM::State.new('blo')
+      bli_state = FSM::State.new('bli', self)
+      blo_state = FSM::State.new('blo', self)
       assert_raise(ArgumentError) do
         FSM::Transition.new(nil, nil, nil)
       end
@@ -33,12 +33,13 @@ class TransitionTest < Test::Unit::TestCase
     end
     
     should 'allow only valid options' do
-      bli_state = FSM::State.new('bli')
-      blo_state = FSM::State.new('blo')
+      bli_state = FSM::State.new('bli', self)
+      blo_state = FSM::State.new('blo', self)
       assert_raise(ArgumentError) do
         FSM::Transition.new(:name, bli_state, blo_state, :foo => 12)
       end
       FSM::Transition.new(:name, bli_state, blo_state, :event => :some)
+      FSM::Transition.new(:name, bli_state, blo_state, :guard => :some)
     end
   end
 end

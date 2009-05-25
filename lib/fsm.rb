@@ -17,10 +17,10 @@ module FSM
       end
     end
     
-    def dot(options = {})
+    def draw_graph(options = {})
       machine = Machine[self]
       raise 'No FSM defined. Call define_fsm first' unless machine
-      machine.dot(options)
+      machine.draw_graph(options)
     end
     
   end

@@ -10,10 +10,11 @@ module FSM
     # options
     #  * :enter : a symbol or string or Proc
     #  * :exit : a symbol or string or Proc
-    def initialize(name, options = {})
-      raise ArgumentError.new('Name is required') unless name
+    def initialize(name, target_class, options = {})
+      raise ArgumentError.new('name and target_class is required') unless name && target_class
       assert_options(options, [:enter, :exit])
       @name = name
+      @target_class = target_class
       @enter = Executable.new options[:enter] if options.has_key?(:enter)
       @exit = Executable.new options[:exit] if options.has_key?(:exit)
       @transitions = {}
@@ -40,10 +41,28 @@ module FSM
     def to_states
       @transitions.map { |to_name, transition| transition.to}
     end
+    def final?
+      @transitions.empty?
+    end
+    
+    def initial?
+      Machine[@target_class].initial_state_name == self.name
+    end
     
     def to_s
-      "State '#{self.name}'"
+      "State '#{self.name}' is "
     end
-
+    
+    def to_dot(options = {})
+      
+      if final?
+        attrs = "style=bold"
+      elsif initial?
+        attrs = "style=bold, label=\"#{self.name}\\n(initial)\""
+      else
+        attrs = ""
+      end
+      "#{self.name}[#{attrs}]"
+    end
   end
 end

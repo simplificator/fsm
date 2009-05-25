@@ -9,18 +9,19 @@ FSM is a simple finite state machine
       define_fsm do
         # now define all the states
         # you can add :enter / :exit callbacks (callback can be a String, Symbol or Proc)
-        # these callbacks are triggered on any transition from/to this state
+        # these callbacks are triggered on any transition from/to this state.
         
         state(:gas)
         state(:liquid)
         state(:solid, :enter => :on_enter_solid, :exit => :on_exit_solid)
         
         # define all valid transitions (arguments are name of transition, from state name, to state name)
-        # you can define callbacks which are called only on this transition
-        transition(:heat_up, :solid, :liquid, :event => :liquified)
-        transition(:heat_up, :liquid, :gas)     # look mam.... two transitions with same name
-        transition(:cool_down, :gas, :liquid)
-        transition(:cool_down, :liquid, :solid)
+        # you can define callbacks which are called only on this transition as well as guards 
+        # guards prevent transition when they return nil/false
+        transition(:heat_up, :solid, :liquid, :event => :on_heat, :guard => :guard_something)
+        transition(:heat_up, :liquid, :gas, :event => :on_heat)     # look mam.... two transitions with same name
+        transition(:cool_down, :gas, :liquid, :event => :on_cool)
+        transition(:cool_down, :liquid, :solid, :event => :on_cool)
         
         # define the attribute which is used to store the state (defaults to :state)
         state(:state_of_material)
@@ -32,28 +33,59 @@ FSM is a simple finite state machine
       private
       # callbacks here...
       def ...
+      
+      # 
+      def guard_something()
+        
+      end
     end
     
     # then you can call these methods
     w = Water.new
-    w.heat  # the name of the transition is the name of the method
+    w.heat_up  # the name of the transition is the name of the method
     w.reachable_state_names
     w.available_transition_names
     w.cool_down # again... it's the name of the transition
     w.state_of_material
     
+    
+## Guards
+Guards are methods or Procs which can prevent a transition. To do so they just need to return false/nil. If no guard is specified
+then the transition is always executed.
+
+## Callbacks and arguments
+If the :enter/:exit callbacks are methods, then they are not passed any arguments, if it's a Proc, 
+then a single argument (the caller) is passed.
+Short: :enter/:exit methods must take 0 arguments, :enter/:exit Procs must take one argument.
+
+If :event and :guard callbacks are methods then they are passed all the arguments that were passed to the transition method.
+With Procs for :event and :guard the caller as well as all the arguments passed to the transition methods are passed.
+
+   
+## Order of callbacks/guards calls
+The callbacks/guards are called in following order if the guard returns __true__:
+  * :exit (state)
+  * :guard (transition)
+  * :event (transition)
+  * :enter (state) 
+  
+The callbacks/guards are called in following order if the guard returns __false__:
+  * :exit (state)
+  * :guard (transition)
+
+
 ## Graphviz / Dot format
 FSM supports the dot format of graphviz (http://www.graphviz.org/).
 If you have the graphviz tools installed (the dot executable must be on the path) then
 you can export a graph to png like this
     # Export to water.png in the current dir
-    Water.dot    
+    Water.graph    
     # Export in another format. (see graphviz documentation for supported file formats)
-    Water.dot(:format => :foo)
+    Water.draw_graph(:format => :foo)
     # Change the extension (defaults to the format)
-    Water.dot(:format => :jpg, :extension => :jpeg)
+    Water.draw_graph(:format => :jpg, :extension => :jpeg)
     # Specify a custom file
-    Water.dot(:outfile => '/afile.png')
+    Water.draw_graph(:outfile => '/afile.png')
   
     
 ## Copyright

@@ -19,7 +19,7 @@ module FSM
     
     def state(name, options = {})
       raise "State is already defined: '#{name}'" if self.state_for_name(name, true)
-      self.states << State.new(name, options)
+      self.states << State.new(name, @target_class, options)
       self.initial_state_name=(name) unless self.initial_state_name
     end
     
@@ -79,14 +79,19 @@ module FSM
       state
     end
     
-    def to_dot
-      dots = self.transitions.map do |transition|
-        "  #{transition.from.name} -> #{transition.to.name}"
+    # Convert this state machine to the dot format of graphviz
+    def to_dot(options = {})
+      s = self.states.map do |state|
+        "  #{state.to_dot(options)};"
       end
-      "digraph FSM {\n#{dots.join(";\n")}\n}"
+      t = self.transitions.map do |transition|
+        "  #{transition.to_dot(options)};"
+      end
+      "digraph FSM_#{@target_class.name} {\n#{s.join("\n")}\n\n#{t.join("\n")}\n}"
     end
     
-    def dot(options = {})
+    # 
+    def draw_graph(options = {})
       format = options[:format] || :png
       extension = options[:extension] || format
       file_name = options[:outfile] || "#{@target_class.name.downcase}.#{extension}" 
@@ -115,10 +120,14 @@ module FSM
           to_state = transition.to
           
           from_state.exit(self)
-          transition.fire_event(self, args)
-          to_state.enter(self)
-          Machine.set_current_state_name(self, to_state.name)
-          true # at the moment always return true ... as soon as we have guards or thelike this could be false as well 
+          if transition.fire?(self, args)
+            transition.fire_event(self, args)
+            to_state.enter(self)
+            Machine.set_current_state_name(self, to_state.name)
+            true
+          else
+            false
+          end
         end
       end
     end
