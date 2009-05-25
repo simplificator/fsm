@@ -42,5 +42,19 @@ FSM is a simple finite state machine
     w.cool_down # again... it's the name of the transition
     w.state_of_material
     
+## Graphviz / Dot format
+FSM supports the dot format of graphviz (http://www.graphviz.org/).
+If you have the graphviz tools installed (the dot executable must be on the path) then
+you can export a graph to png like this
+  # Export to water.png in the current dir
+  Water.dot    
+  # Export in another format. (see graphviz documentation for supported file formats)
+  Water.dot(:format => :foo)
+  # Change the extension (defaults to the format)
+  Water.dot(:format => :jpg, :extension => :jpeg)
+  # Specify a custom file
+  Water.dot(:outfile => '/afile.png')
+  
+    
 ## Copyright
 Copyright (c) 2009 simplificator GmbH. See LICENSE for details.

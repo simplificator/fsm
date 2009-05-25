@@ -16,6 +16,13 @@ module FSM
         end
       end
     end
+    
+    def dot(options = {})
+      machine = Machine[self]
+      raise 'No FSM defined. Call define_fsm first' unless machine
+      machine.dot(options)
+    end
+    
   end
   
   module InstanceMethods

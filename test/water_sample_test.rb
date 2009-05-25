@@ -30,7 +30,6 @@ class Water
   end
   def on_exit_solid()
   end
-  
 end
 
 class WaterSampleTest < Test::Unit::TestCase
