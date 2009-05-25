@@ -79,6 +79,24 @@ module FSM
       state
     end
     
+    def to_dot
+      dots = self.transitions.map do |transition|
+        "  #{transition.from.name} -> #{transition.to.name}"
+      end
+      "digraph FSM {\n#{dots.join(";\n")}\n}"
+    end
+    
+    def dot(options = {})
+      format = options[:format] || :png
+      extension = options[:extension] || format
+      file_name = options[:outfile] || "#{@target_class.name.downcase}.#{extension}" 
+      cmd = "dot -T#{format} -o#{file_name}"
+      IO.popen cmd, 'w' do |io| 
+        io.write to_dot
+      end 
+      raise 'dot failed' unless $?.success? 
+    end
+    
     private
     
     # defines a transition method on the target class.
