@@ -8,6 +8,11 @@ module FSM
       raise 'FSM is already defined. Call define_fsm only once' if Machine[self]
       builder = Builder.new(self)
       Machine[self] = builder.process(&block)
+      
+      # TODO: check if all states are reachable
+      # TODO: other checks? islands?
+      
+      # create alias for state attribute method to intercept it 
       self.instance_eval() do 
         alias_method "fsm_state_attribute", Machine[self].current_state_attribute_name
         define_method(Machine[self].current_state_attribute_name) do

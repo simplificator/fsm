@@ -8,8 +8,7 @@ class Water
     # now define all the states
     # you can add :enter / :exit callbacks (callback can be a String, Symbol or Proc)
     # these callbacks are triggered on any transition from/to this state and do not receive any arguments
-    state(:gas)
-    state(:liquid)
+    states(:gas, :liquid)
     state(:solid, :enter => :on_enter_solid, :exit => :on_exit_solid)
     
     # define all valid transitions (name, from, to). This will define a method with the given name.

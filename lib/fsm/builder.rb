@@ -27,8 +27,10 @@ module FSM
     #  * to_name: name of the target state (symbol)
     #  * options
     #  
-    def transition(name, from_name, to_name, options = {})
-      @machine.transition(name, from_name, to_name, options)
+    def transition(name, from_names, to_name, options = {})
+      Array(from_names).each do |from_name|
+        @machine.transition(name, from_name, to_name, options)
+      end
       nil # do not expose FSM details
     end
     
@@ -48,6 +50,10 @@ module FSM
       nil # do not expose FSM details
     end
     
-    
+    def states(*names)
+      names.each do |name|
+        state(name)
+      end
+    end
   end
 end

@@ -54,11 +54,10 @@ module FSM
     end
     
     def to_dot(options = {})
-      
-      if final?
-        attrs = "style=bold"
-      elsif initial?
+      if initial?
         attrs = "style=bold, label=\"#{self.name}\\n(initial)\""
+      elsif final?  
+        attrs = "style=bold"
       else
         attrs = ""
       end

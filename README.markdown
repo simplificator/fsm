@@ -1,6 +1,11 @@
 # fsm
 
-FSM is a simple finite state machine
+FSM is a simple finite state machine gem. You can define your State Machine with a "DSL".
+
+## Status
+FSM is still under development so the interface can/might/will change, features will be added (and perhaps removed again)
+But if you are interested in this project, then use it and tell us what you think/need/want/like/don't like. We are open
+for suggestions!
 
 ## Usage
     class Water
@@ -11,8 +16,7 @@ FSM is a simple finite state machine
         # you can add :enter / :exit callbacks (callback can be a String, Symbol or Proc)
         # these callbacks are triggered on any transition from/to this state.
         
-        state(:gas)
-        state(:liquid)
+        states(:gas, :liquid) # shortcut to define several states but you can not specify callbacks
         state(:solid, :enter => :on_enter_solid, :exit => :on_exit_solid)
         
         # define all valid transitions (arguments are name of transition, from state name, to state name)
@@ -20,8 +24,7 @@ FSM is a simple finite state machine
         # guards prevent transition when they return nil/false
         transition(:heat_up, :solid, :liquid, :event => :on_heat, :guard => :guard_something)
         transition(:heat_up, :liquid, :gas, :event => :on_heat)     # look mam.... two transitions with same name
-        transition(:cool_down, :gas, :liquid, :event => :on_cool)
-        transition(:cool_down, :liquid, :solid, :event => :on_cool)
+        transition(:cool_down, [:gas, :liquid], :liquid, :event => :on_cool)
         
         # define the attribute which is used to store the state (defaults to :state)
         state(:state_of_material)
