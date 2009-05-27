@@ -1,4 +1,4 @@
-%w[options errors machine state transition executable builder].each do |item|
+%w[options errors machine state transition executable builder state_attribute_interceptor].each do |item|
   require File.join(File.dirname(__FILE__), 'fsm', item)
 end
 
@@ -13,13 +13,10 @@ module FSM
       # TODO: other checks? islands?
       
       # create alias for state attribute method to intercept it 
-      self.instance_eval() do 
-        alias_method "fsm_state_attribute", Machine[self].current_state_attribute_name
-        define_method(Machine[self].current_state_attribute_name) do
-          value = fsm_state_attribute
-          value ? value : Machine[self.class].initial_state_name
-        end
-      end
+      # intercept
+      FSM::StateAttributeInterceptor.add_interceptor(self)
+      
+      
     end
     
     def draw_graph(options = {})

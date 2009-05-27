@@ -16,4 +16,4 @@ class Ticket
   end
 end
 
-Ticket.draw_graph
+Ticket.draw_graph(:format => 'ps')

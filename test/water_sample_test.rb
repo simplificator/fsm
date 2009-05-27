@@ -59,8 +59,6 @@ class Water
     self.temperature -= delta
   end
 end
-# Draw the the state graph
-#Water.draw_graph(:format => :svg)
 
 class WaterSampleTest < Test::Unit::TestCase
   context 'Water' do

@@ -1,5 +1,8 @@
 *.sw?
 .DS_Store
+**/.DS_Store
 coverage
 rdoc
 pkg
+*.sqlite3
+**/*.sqlite3

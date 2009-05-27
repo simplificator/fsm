@@ -39,8 +39,7 @@ module FSM
     end
     
     def self.get_current_state_name(target)
-      value = target.send(Machine[target.class].current_state_attribute_name)
-      (value && value.is_a?(String)) ? value.intern : value
+      target.send(Machine[target.class].current_state_attribute_name) || self.initial_state_name
     end
     
     def self.set_current_state_name(target, value)
