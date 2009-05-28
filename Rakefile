@@ -9,6 +9,7 @@ begin
     gem.email = "info@simplificator.com"
     gem.homepage = "http://github.com/simplificator/fsm"
     gem.authors = ["simplificator"]
+    gem.files.exclude '**/*.sqlite3', '*.sqlite3'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
