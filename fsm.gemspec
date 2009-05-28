@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{fsm}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["simplificator"]
-  s.date = %q{2009-05-27}
+  s.date = %q{2009-05-28}
   s.email = %q{info@simplificator.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
     "test/invoice_sample_test.rb",
     "test/options_test.rb",
     "test/state_test.rb",
-    "test/test.sqlite3",
     "test/test_helper.rb",
     "test/test_helper_ar.rb",
     "test/transition_test.rb",
