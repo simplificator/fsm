@@ -12,6 +12,8 @@ module FSM
      
     end
     
+    # TODO: find reasonable names for these methods... actualy find a better way to intercept those calls
+    # looks really ugly to me
     private
     def self.bar(klass)
       klass.instance_eval() do

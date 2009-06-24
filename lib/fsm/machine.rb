@@ -43,6 +43,7 @@ module FSM
     end
     
     def self.set_current_state_name(target, value)
+      value = value && value.is_a?(Symbol) ? value.to_s : value
       target.send("#{Machine[target.class].current_state_attribute_name}=", value)
     end
 

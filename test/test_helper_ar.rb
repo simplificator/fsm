@@ -22,6 +22,7 @@ class Order < ActiveRecord::Base
   include FSM
   define_fsm do 
     states :open, :closed, :delivered
+    transition(:deliver, :open, :delivered)
   end
 end
 
