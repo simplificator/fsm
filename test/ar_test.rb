@@ -12,14 +12,15 @@ class ArTest < Test::Unit::TestCase
     end
     
     should 'make transition' do
-      o = Order.new
-      o.deliver
-      assert_equal :delivered, o.state
-      o.save!
-      o.reload
-      o = Order.find(o.id)
-      assert_equal :delivered, o.state
-    end
-    
+          o = Order.new
+          assert_equal :open, o.state
+          o.deliver
+          assert_equal :delivered, o.state
+          o.save!
+          o.reload
+          o = Order.find(o.id)
+          assert_equal :delivered, o.state
+        end
+        
   end
 end

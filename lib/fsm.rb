@@ -15,8 +15,6 @@ module FSM
       # create alias for state attribute method to intercept it 
       # intercept
       FSM::StateAttributeInterceptor.add_interceptor(self)
-      
-      
     end
     
     def draw_graph(options = {})

@@ -6,6 +6,15 @@ module FSM
       
       if hierarchy.include?("ActiveRecord::Base")
         bar(klass)
+        
+        klass.class_eval do
+          before_save :assign_default_state
+          define_method(:assign_default_state) do
+            if read_attribute(Machine[self.class].current_state_attribute_name).blank?
+              self.send("#{Machine[self.class].current_state_attribute_name}=", Machine[self.class].initial_state_name.to_s)
+            end
+          end
+        end
       else 
         foo(klass)
       end

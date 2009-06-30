@@ -16,8 +16,9 @@ rescue
 end
 
 ActiveRecord::Base.connection.create_table(:orders) do |table|
-  table.string(:state, :null => false, :limit => 10, :default => 'open')
+  table.string(:state, :null => false, :limit => 10)
 end
+
 class Order < ActiveRecord::Base
   include FSM
   define_fsm do 
