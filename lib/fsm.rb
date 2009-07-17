@@ -1,4 +1,4 @@
-%w[dot options errors machine state transition executable builder state_attribute_interceptor].each do |item|
+%w[dot options state errors machine transition executable builder state_attribute_interceptor].each do |item|
   require File.join(File.dirname(__FILE__), 'fsm', item)
 end
 

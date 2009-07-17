@@ -41,27 +41,10 @@ module FSM
     def to_states
       @transitions.map { |to_name, transition| transition.to}
     end
-    def final?
-      @transitions.empty?
-    end
-    
-    def initial?
-      Machine[@target_class].initial_state_name == self.name
-    end
     
     def to_s
       "State '#{self.name}' is "
     end
     
-    def to_dot(options = {})
-      if initial?
-        attrs = "style=bold, label=\"#{self.name}\\n(initial)\""
-      elsif final?  
-        attrs = "style=bold"
-      else
-        attrs = ""
-      end
-      "#{self.name}[#{attrs}]"
-    end
   end
 end

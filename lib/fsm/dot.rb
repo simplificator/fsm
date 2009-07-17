@@ -1,12 +1,15 @@
 module FSM
   module Dot
     def self.included(includer)
-      includer.class_eval do 
-        include(InstanceMethods)
+      FSM::Machine.class_eval do 
+        include(MachineInstanceMethods)
+      end
+      FSM::State.class_eval do 
+        include(StateInstanceMethods)
       end
     end
     
-    module InstanceMethods
+    module MachineInstanceMethods
       # Convert this state machine to the dot format of graphviz
       def to_dot(options = {})
         s = self.states.map do |state|
@@ -29,6 +32,30 @@ module FSM
         end 
         raise 'dot failed' unless $?.success? 
       end      
+    end
+    
+    module StateInstanceMethods
+      def to_dot(options = {})
+        if initial?
+          attrs = "style=bold, label=\"#{self.name}\\n(initial)\""
+        elsif final?  
+          attrs = "style=bold"
+        else
+          attrs = ""
+        end
+        "#{self.name}[#{attrs}]"
+      end
+      
+      
+      # Is this state final?
+      def final?
+        @transitions.empty?
+      end
+
+      # Is this the initial state
+      def initial?
+        Machine[@target_class].initial_state_name == self.name
+      end
     end
   end
 end
