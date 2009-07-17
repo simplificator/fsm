@@ -1,4 +1,4 @@
-%w[options errors machine state transition executable builder state_attribute_interceptor].each do |item|
+%w[dot options errors machine state transition executable builder state_attribute_interceptor].each do |item|
   require File.join(File.dirname(__FILE__), 'fsm', item)
 end
 
@@ -13,14 +13,12 @@ module FSM
       # TODO: other checks? islands?
       
       # create alias for state attribute method to intercept it 
-      # intercept
       FSM::StateAttributeInterceptor.add_interceptor(self)
     end
     
-    def draw_graph(options = {})
-      machine = Machine[self]
-      raise 'No FSM defined. Call define_fsm first' unless machine
-      machine.draw_graph(options)
+    def fsm_draw_graph(options = {})
+      raise 'No FSM defined. Call define_fsm first' unless Machine[self]
+      Machine[self].draw_graph(options)
     end
     
   end
@@ -28,12 +26,22 @@ module FSM
   module InstanceMethods
     #
     # Which states are reachable from the current state
-    def reachable_state_names
+    def fsm_next_state_names
       Machine[self.class].reachable_states(self).map() {|item| item.name}
     end
     
-    def available_transition_names
+    def fsm_state_names
+      Machine[self.class].states.map() {|item| item.name}
+    end
+    
+    #
+    # What are the next transitions
+    def fsm_next_transition_names
       Machine[self.class].available_transitions(self).map() {|item| item.name}
+    end
+    
+    def fsm_transition_names
+      Machine[self.class].transitions.map() {|item| item.name}
     end
   end
   

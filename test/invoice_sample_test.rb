@@ -27,11 +27,12 @@ class Invoice
 end
 
 class InvoiceSampleTest < Test::Unit::TestCase
-  context 'Invoice' do
-    
+  context 'an Invoice' do
+    setup do
+      @invoice = Invoice.new
+    end
     should 'Initial State is the first state defined unless no initial() call was made' do
-      invoice = Invoice.new
-      assert_equal(:open, invoice.state)
+      assert_equal(:open, @invoice.state)
     end
     
     should 'Accept an initial state from outside' do
@@ -40,28 +41,46 @@ class InvoiceSampleTest < Test::Unit::TestCase
     end
     
     should 'Trasition to paid and then refunded' do
-      invoice = Invoice.new
-      assert_equal(:open, invoice.state)
+      assert_equal(:open, @invoice.state)
       
-      invoice.pay(1000)
-      assert_equal(:paid, invoice.state)
+      @invoice.pay(1000)
+      assert_equal(:paid, @invoice.state)
       
-      invoice.refund
-      assert_equal(:refunded, invoice.state)
+      @invoice.refund
+      assert_equal(:refunded, @invoice.state)
     end
     
     should 'Raise on illegal transition' do
-      invoice = Invoice.new
       assert_raise(FSM::InvalidStateTransition) do
-        invoice.refund
+        @invoice.refund
       end
     end
     
     should 'Pass the arguments to the event handler' do
-      invoice = Invoice.new
-      invoice.pay(1000)
-      assert_equal(0, invoice.amount)
+      @invoice.pay(1000)
+      assert_equal(0, @invoice.amount)
     end
     
+    should 'List all states' do
+        assert_equal_symbols [:paid, :refunded, :open], @invoice.fsm_state_names
+    end
+    should 'List all transitions' do
+        assert_equal_symbols [:pay, :refund], @invoice.fsm_transition_names
+    end
+    
+    should 'List next states' do
+      assert_equal_symbols :paid, @invoice.fsm_next_state_names
+      @invoice.pay(1000)
+      assert_equal_symbols :refunded, @invoice.fsm_next_state_names
+    end
+    
+    should 'List next transitions' do
+      assert_equal_symbols :pay, @invoice.fsm_next_transition_names
+      @invoice.pay(1000)
+      assert_equal_symbols :refund, @invoice.fsm_next_transition_names
+    end
+    
+    
+
   end
 end

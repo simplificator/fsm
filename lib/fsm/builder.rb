@@ -1,5 +1,5 @@
 module FSM
-  # Builder exposees 'only' (well there are some other methods exposed) the methods that are required to build the configuration
+  # Builder exposes 'only' (well there are some other methods exposed) the methods that are required to build the configuration
   class Builder
     
     # Blank Slate

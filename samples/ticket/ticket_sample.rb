@@ -14,6 +14,7 @@ class Ticket
     
     transition(:invalidate, [:created, :reserved, :inside, :outside], :invalid)
   end
+  
 end
 
-Ticket.draw_graph(:format => 'ps')
+t = Ticket.fsm_draw_graph(:format => 'png')
