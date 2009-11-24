@@ -27,7 +27,8 @@ module FSM
     def self.bar(klass)
       klass.instance_eval() do
         define_method(Machine[klass].current_state_attribute_name) do
-          value = read_attribute(Machine[self.class].current_state_attribute_name) || Machine[self.class].initial_state_name
+          value = read_attribute(Machine[self.class].current_state_attribute_name)
+          value = Machine[self.class].initial_state_name if value.blank?
           value.is_a?(String) ? value.intern : value
         end
       end

@@ -27,7 +27,7 @@ for suggestions!
         transition(:cool_down, [:gas, :liquid], :liquid, :event => :on_cool)
         
         # define the attribute which is used to store the state (defaults to :state)
-        state(:state_of_material)
+        state_attribute(:state_of_material)
         
         # define the initial state (defaults to the first state defined - :gas in this sample)
         initial(:liquid)
