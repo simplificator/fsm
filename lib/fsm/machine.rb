@@ -72,6 +72,13 @@ module FSM
       end
     end
     
+    def build_state_check_methods
+      self.states.each do |state|
+        define_state_check_method(state)
+      end
+    end
+
+    
     # Lookup a State by it's name
     # raises ArgumentError if state can not be found unless quiet is set to true
     def state_for_name(name, quiet = false)
@@ -82,6 +89,14 @@ module FSM
     
     
     private
+    
+    def define_state_check_method(state)
+      @target_class.instance_eval do
+        define_method("state_#{state.name}?") do
+          Machine.get_current_state_name(self).to_s == state.name.to_s
+        end
+      end
+    end
     
     # defines a transition method on the target class.
     # this is the method triggering the state change.

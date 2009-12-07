@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "fsm"
+    gem.name = "simplificator-fsm"
     gem.summary = %Q{A simple finite state machine (FSM) gem.}
     gem.email = "info@simplificator.com"
     gem.homepage = "http://github.com/simplificator/fsm"

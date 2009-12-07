@@ -28,5 +28,13 @@ class ArTest < Test::Unit::TestCase
       o = Order.find(o.id)
       assert_equal :delivered, o.state
     end
+    
+    
+    should 'have state check methods' do
+      o = Order.new
+      assert o.state_open?
+      o.deliver
+      assert o.state_delivered?
+    end
   end
 end

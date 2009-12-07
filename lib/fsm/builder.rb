@@ -17,6 +17,7 @@ module FSM
       raise ArgumentError.new('Block expected') unless block_given?
       self.instance_eval(&block)
       @machine.build_transition_methods
+      @machine.build_state_check_methods
       @machine
     end
     

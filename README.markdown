@@ -50,6 +50,8 @@ for suggestions!
     w.available_transition_names
     w.cool_down # again... it's the name of the transition
     w.state_of_material
+    w.state_liquid?
+    w.state_solid?
     
     
 ## Guards
