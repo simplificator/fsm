@@ -6,3 +6,4 @@ rdoc
 pkg
 *.sqlite3
 **/*.sqlite3
+.rvmrc
