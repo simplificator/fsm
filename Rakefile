@@ -1,3 +1,5 @@
+require 'yaml'
+
 require 'rubygems'
 require 'rake'
 
